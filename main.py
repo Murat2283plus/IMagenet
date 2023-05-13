@@ -9,10 +9,14 @@ from models import ConvNet
 from train import train_and_validate, evaluate
 from utils import prepare_data, plot_losses, count_parameters, save_model, load_model, adjust_learning_rate
 
+import os
+
 
 
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print('device用的是:',device)
+    print('现在的目录',os.getcwd())
     data_dir = "data/tiny-imagenet-200"
     batch_size = 20
     num_epochs = 100
