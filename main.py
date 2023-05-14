@@ -8,7 +8,7 @@ from torchvision.transforms import transforms
 from models import ConvNet
 from train import train_and_validate, evaluate
 from utils import prepare_data, plot_losses, count_parameters, save_model, load_model, adjust_learning_rate
-
+import pandas as pd
 import os
 
 
@@ -42,6 +42,8 @@ def main():
     train_losses = []
     val_losses = []
     best_val_acc = 0
+    with open("best_model/loss.csv", "w") as f: 
+        f.write("train_loss,val_loss\n")
     for epoch in range(start_epoch,num_epochs):
         adjust_learning_rate(optimizer, epoch, init_lr, lr_decay_period)
         train_loss, val_loss, val_acc = train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, epoch,num_epochs)
@@ -49,13 +51,18 @@ def main():
         #     print(f"Epoch {epoch+1}/{num_epochs}, train loss: {train_loss:.4f}, val loss: {val_loss:.4f}, val acc: {val_acc:.2%}")
         train_losses.append(train_loss)
         val_losses.append(val_loss)
-
+        with open("best_model/loss.csv", "a") as f: 
+            f.write(f"{train_loss},{val_loss}\n")
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             save_model(model, saved_model_path, epoch, optimizer)
 
     # Plot the losses
-    plot_losses(train_losses, val_losses, "losses.png")
+    df = pd.read_csv("best_model/loss.csv")
+    plt.plot(df["train_loss"], label="Train Loss")
+    plt.plot(df["val_loss"], label="Val Loss")
+    plt.legend()
+    plt.savefig("best_model/losses.png")
 
     # Load the best model and evaluate on the test set
     best_epoch = load_model(model, "best_model/model_epoch{best_epoch}.pt", optimizer)
