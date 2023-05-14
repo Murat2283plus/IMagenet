@@ -1,4 +1,3 @@
-# utils.py
 import torch
 import os
 from torch.utils.data import DataLoader, random_split
@@ -8,13 +7,13 @@ import matplotlib.pyplot as plt
 
 def count_parameters(model):
     """
-    Count the total number of trainable parameters in a model.
+    计算模型中可训练参数的总数。
     """
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def save_model(model, path, epoch, optimizer):
     """
-    Save the model to the specified path, including epoch and optimizer state.
+    将模型保存到指定路径，包括当前的训练轮数和优化器状态。
     """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -27,7 +26,7 @@ def save_model(model, path, epoch, optimizer):
 
 def load_model(model, path, optimizer=None):
     """
-    Load the model from the specified path, including epoch and optimizer state (if provided).
+    从指定路径加载模型，包括训练轮数和优化器状态（如果提供了优化器）。
     """
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint['model_state_dict'])
@@ -39,7 +38,7 @@ def load_model(model, path, optimizer=None):
 
 def adjust_learning_rate(optimizer, epoch, init_lr, lr_decay_period):
     """
-    Adjust the learning rate of an optimizer based on the current epoch and decay period.
+    根据当前训练轮数和学习率衰减周期调整优化器的学习率。
     """
     lr = init_lr * (0.1 ** (epoch // lr_decay_period))
     for param_group in optimizer.param_groups:
@@ -71,20 +70,20 @@ def prepare_data(data_dir, batch_size):
 
 def plot_losses(train_losses, val_losses, save_path=None):
     """
-    Plot the training and validation losses over epochs.
+    绘制训练和验证损失随训练轮数变化的曲线图。
 
-    Args:
-        train_losses (list): A list of training losses.
-        val_losses (list): A list of validation losses.
-        save_path (str, optional): The path to save the plot. Defaults to None.
+    参数:
+        train_losses (list): 训练损失列表。
+        val_losses (list): 验证损失列表。
+        save_path (str, 可选): 保存图像的路径。默认为 None，显示图像。
     """
     epochs = range(1, len(train_losses) + 1)
 
     plt.figure()
-    plt.plot(epochs, train_losses, label='Training Loss')
-    plt.plot(epochs, val_losses, label='Validation Loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
+    plt.plot(epochs, train_losses, label='训练损失')
+    plt.plot(epochs, val_losses, label='验证损失')
+    plt.xlabel('训练轮数')
+    plt.ylabel('损失')
     plt.legend()
 
     if save_path is not None:
